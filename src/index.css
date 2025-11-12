@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+/* Tailwind v4 theming via CSS tokens */
+@theme {
+  --color-retro-paper: #f5efe6;
+  --color-retro-ink: #2b2b2b;
+  --color-retro-tea: #7aa2a6;
+  --color-retro-coral: #e26d5c;
+  --color-retro-mustard: #e4b363;
+  --color-retro-olive: #607466;
+  --color-retro-violet: #826aaf;
+
+  --font-display: ui-rounded, system-ui, Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --shadow-soft: 0 8px 0 0 rgba(0,0,0,0.12);
+  --shadow-retro: 6px 6px 0 0 rgba(0,0,0,0.2);
+
+  --ease-snappy: cubic-bezier(.2,.8,.2,1);
+}
+
+/* Base theme: modern retro */
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  color-scheme: light;
+  /* text color via token */
+  @apply text-retro-ink antialiased;
+  background-color: var(--color-retro-paper);
+  background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+/* Reusable UI helpers */
+.bento-card {
+  @apply rounded-2xl border border-black/10 bg-white/80 backdrop-blur-sm shadow-retro;
+}
+.btn-primary {
+  @apply inline-flex items-center gap-2 rounded-xl border-2 border-black/10 bg-retro-tea text-white px-4 py-2 shadow-soft transition-transform duration-200 ease-snappy hover:-translate-y-0.5 hover:shadow-retro;
+}
+.price-chip {
+  @apply inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-semibold bg-retro-mustard/40 text-retro-ink border border-black/10;
+}
