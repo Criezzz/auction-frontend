@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../features/auth/AuthProvider'
+import { LogIn } from '../components/icons'
 
 export default function SignInPage() {
   const [username, setUsername] = useState('admin')
-  const [password, setPassword] = useState('admin')
+  const [password, setPassword] = useState('admin123')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const { signIn } = useAuth()
@@ -28,7 +29,10 @@ export default function SignInPage() {
 
   return (
     <div className="max-w-sm mx-auto bento-card p-6">
-      <h1 className="font-display text-2xl mb-4">Sign in</h1>
+      <div className="flex flex-col items-center gap-2 mb-4">
+        <LogIn className="w-12 h-12 lg:w-16 lg:h-16" />
+        <h1 className="font-display text-2xl">Sign in</h1>
+      </div>
       <form className="space-y-3" onSubmit={onSubmit}>
         <label className="block">
           <span className="text-sm">Username</span>

@@ -1,4 +1,4 @@
-const base = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const base = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/$/, '')
 
 let getAccessTokenHook = null
 let onUnauthorizedHook = null
@@ -11,8 +11,22 @@ export function setAuthHandlers({ getAccessToken, onUnauthorized } = {}) {
 async function request(path, { method = 'GET', headers = {}, retry = true, ...rest } = {}) {
   const url = base ? `${base}${path}` : path
   const token = getAccessTokenHook ? await getAccessTokenHook() : null
+  
+  // Debug logging
+  console.log('🌐 API Request:', {
+    method,
+    url,
+    headers: {
+      'Accept': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...headers,
+    },
+    body: rest.body
+  })
+  
   const res = await fetch(url, {
     method,
+    credentials: 'include', // Quan trọng: Cho phép gửi cookies/credentials
     headers: {
       'Accept': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),

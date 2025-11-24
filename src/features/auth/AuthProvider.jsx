@@ -26,9 +26,13 @@ export function AuthProvider({ children }) {
     ;(async () => {
       if (getTokens()) {
         try {
+          // Add delay to prevent blocking during authentication
+          await new Promise(resolve => setTimeout(resolve, 100))
           await refreshToken().catch(() => {}) // try refresh silently
           await loadProfile()
-        } catch {}
+        } catch (error) {
+          console.warn('Token refresh/profile loading failed:', error)
+        }
       }
     })()
     return () => unsub()

@@ -1,54 +1,61 @@
-import { apiBase, httpGet, httpPost } from '../../services/httpClient'
-
-const useMock = !apiBase()
+import { httpGet, httpPost } from '../../services/httpClient'
 
 export async function viewPostAuctionStatus(auctionId) {
-  if (useMock) {
-    await new Promise((r) => setTimeout(r, 200))
-    return {
-      auction_id: auctionId,
-      payment: { status: 'REQUESTED', method: 'BANK', requested_at: new Date().toISOString() },
-      product: { shipping_status: 'PREPARING', receiving_method: 'Pick-up' },
-    }
-  }
   return httpGet(`/auctions/${auctionId}/status`)
 }
 
+// Updated for API v2.1 - Registration now includes deposit payment creation
 export async function registerForAuction(auctionId) {
-  if (useMock) { await new Promise((r)=>setTimeout(r,200)); return { ok: true, auction_id: auctionId } }
-  return httpPost(`/auctions/${auctionId}/register`)
+  return httpPost(`/participation/register`, { auction_id: parseInt(auctionId) })
+}
+
+// Check user's participation status for an auction (NEW v2.1)
+export async function getParticipationStatus(auctionId) {
+  return httpGet(`/participation/auction/${auctionId}/status`)
 }
 
 export async function cancelRegistration(auctionId) {
-  if (useMock) { await new Promise((r)=>setTimeout(r,200)); return { ok: true, auction_id: auctionId } }
-  return httpPost(`/auctions/${auctionId}/register/cancel`)
+  return httpPost(`/participation/unregister`, { auction_id: parseInt(auctionId) })
 }
 
 export async function listMyBids() {
-  if (useMock) {
-    await new Promise((r)=>setTimeout(r,150))
-    return [ { id: 'b1', auction_id: 1, amount: 120, status: 'VALID' } ]
-  }
-  return httpGet('/me/bids')
+  return httpGet('/bids/my-bids')
 }
 
 export async function cancelBid(bidId) {
-  if (useMock) { await new Promise((r)=>setTimeout(r,150)); return { ok: true, id: bidId } }
-  return httpPost(`/bids/${bidId}/cancel`)
+  return httpPost(`/bids/cancel/${bidId}`)
 }
 
 export async function submitProduct(payload) {
-  if (useMock) { await new Promise((r)=>setTimeout(r,200)); return { ok: true, id: Math.random().toString(36).slice(2), ...payload } }
-  return httpPost('/products/submit', payload)
+  return httpPost('/products/register', payload)
 }
 
 export async function paymentStatus(auctionId) {
-  if (useMock) { await new Promise((r)=>setTimeout(r,200)); return { status: 'PROCESSING', sent_email_at: new Date().toISOString() } }
-  return httpGet(`/payments/${auctionId}/status`)
+  return httpGet(`/payments/auction/${auctionId}`)
 }
 
+// Updated for API v2.1 - Payment creation with QR token
 export async function startPayment(auctionId, payload) {
-  if (useMock) { await new Promise((r)=>setTimeout(r,400)); return { ok: true, transaction_id: 'MOCKTX' } }
-  return httpPost(`/payments/${auctionId}/pay`, payload)
+  return httpPost(`/payments/create`, { auction_id: parseInt(auctionId), ...payload })
+}
+
+// NEW v2.1: Check QR token status for payment tracking
+export async function checkPaymentTokenStatus(token) {
+  return httpGet(`/payments/token/${token}/status`)
+}
+
+// NEW v2.1: Complete payment via QR callback
+export async function completePaymentWithQR(token) {
+  return httpPost(`/payments/qr-callback/${token}`)
+}
+
+// NEW v2.1: Get user's payment history
+export async function getMyPayments() {
+  return httpGet('/payments/my-payments')
+}
+
+// NEW v2.1: Get specific payment details
+export async function getPaymentDetails(paymentId) {
+  return httpGet(`/payments/${paymentId}`)
 }
 

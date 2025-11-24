@@ -17,13 +17,16 @@ export async function signIn({ username, password }) {
 
 export async function refreshToken() {
   const current = JSON.parse(localStorage.getItem('auth.tokens.v1') || 'null')
+  console.log('Refreshing token...', { hasRefreshToken: !!current?.refresh_token })
   if (!current?.refresh_token) throw new Error('No refresh token')
   if (useMock) {
     const tokens = await mockRefresh(current.refresh_token)
     setTokens(tokens)
     return true
   }
+  console.log('Sending refresh request:', { refresh_token: current.refresh_token.substring(0, 20) + '...' })
   const tokens = await httpPost('/auth/refresh', { refresh_token: current.refresh_token })
+  console.log('Refresh successful')
   setTokens(tokens)
   return true
 }

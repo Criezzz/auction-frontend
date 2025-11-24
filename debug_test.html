@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Debug Test</title>
+</head>
+<body>
+    <h1>CORS Debug Test</h1>
+    <button onclick="testRegister()">Test Register</button>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testAuctions()">Test Auctions</button>
+    
+    <div id="results"></div>
+
+    <script>
+        async function testRegister() {
+            console.log('Testing registration...');
+            const results = document.getElementById('results');
+            
+            try {
+                const response = await fetch('http://localhost:8000/auth/register', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': 'http://localhost:5173'
+                    },
+                    body: JSON.stringify({
+                        username: 'testuser123',
+                        email: 'testuser@example.com',
+                        password: '123456',
+                        first_name: 'Test',
+                        last_name: 'User'
+                    })
+                });
+                
+                const data = await response.json();
+                results.innerHTML += `<div><strong>Register Status:</strong> ${response.status}</div>`;
+                results.innerHTML += `<div><strong>Register Response:</strong> ${JSON.stringify(data)}</div>`;
+                results.innerHTML += `<div><strong>CORS Headers:</strong> ${response.headers.get('access-control-allow-origin')}</div>`;
+                
+                console.log('Register Response:', response);
+                console.log('Register Data:', data);
+                
+            } catch (error) {
+                results.innerHTML += `<div><strong>Register Error:</strong> ${error.message}</div>`;
+                console.error('Register Error:', error);
+            }
+        }
+        
+        async function testLogin() {
+            console.log('Testing login...');
+            const results = document.getElementById('results');
+            
+            try {
+                const response = await fetch('http://localhost:8000/auth/login', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Origin': 'http://localhost:5173'
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'password123'
+                    })
+                });
+                
+                const data = await response.json();
+                results.innerHTML += `<div><strong>Login Status:</strong> ${response.status}</div>`;
+                results.innerHTML += `<div><strong>Login Response:</strong> ${JSON.stringify(data)}</div>`;
+                
+                console.log('Login Response:', response);
+                console.log('Login Data:', data);
+                
+            } catch (error) {
+                results.innerHTML += `<div><strong>Login Error:</strong> ${error.message}</div>`;
+                console.error('Login Error:', error);
+            }
+        }
+        
+        async function testAuctions() {
+            console.log('Testing auctions...');
+            const results = document.getElementById('results');
+            
+            try {
+                const response = await fetch('http://localhost:8000/auctions', {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'Origin': 'http://localhost:5173'
+                    }
+                });
+                
+                const data = await response.json();
+                results.innerHTML += `<div><strong>Auctions Status:</strong> ${response.status}</div>`;
+                results.innerHTML += `<div><strong>Auctions Response:</strong> ${JSON.stringify(data)}</div>`;
+                
+                console.log('Auctions Response:', response);
+                console.log('Auctions Data:', data);
+                
+            } catch (error) {
+                results.innerHTML += `<div><strong>Auctions Error:</strong> ${error.message}</div>`;
+                console.error('Auctions Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
